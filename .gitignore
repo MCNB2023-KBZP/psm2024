@@ -2,3 +2,4 @@
 *.ps
 **/.DS.Store
 **/*.ps
+/data
