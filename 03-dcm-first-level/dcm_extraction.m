@@ -15,40 +15,34 @@ for s=1:10
     folder_path_sub = fullfile(folder_path_data, sprintf('sub-%03d',s));
     file_path_SPMmat = fullfile(folder_path_sub, '1st_level_good_bad_Imag', 'SPM.mat');
     
-    
-    %% change paths in SPM.mat
-    load(file_path_SPMmat);
-    SPM.swd = fullfile(folder_path_sub, '1st_level_good_bad_Imag');
-
-    for r=1:6
-        folder_path_run = fullfile(folder_path_sub, sprintf('run-0%d',r));
-        file_path_run = spm_select('ExtFPList', folder_path_run, '^ds8wragf4d.*$');
-        fname = spm_str_manip(SPM.xY.P, 't');
-        new_fname_notrail = strcat(spm_str_manip(file_path_run, 'r'), '.nii');
-        disp(r)
-        for i = (r*242-241):(r*242) % size(fdir,1)
-            new_fname = file_path_run(i+242-(r*242),:);
-            SPM.xY.P(i,1:length(new_fname)) = new_fname;
-            SPM.xY.VY(i).fname = new_fname_notrail(1,:);
-        end
-        SPM.xY.P = deblank(SPM.xY.P);
-    end
-    
-    save(file_path_SPMmat, 'SPM')
-    
     %% define contrasts
     clear job;
     
     job{1}.spm.stats.con.spmmat = {file_path_SPMmat};
     
-    job{1}.spm.stats.con.consess{1}.tcon.name = 'Perception union';
-    job{1}.spm.stats.con.consess{1}.tcon.weights = [1 1 1 repelem(0,8)];
+    job{1}.spm.stats.con.consess{1}.tcon.name = 'Stimulation > Null';
+    job{1}.spm.stats.con.consess{1}.tcon.weights = [2 2 2 0 0 0 -3 -3 repelem(0,3)];
     job{1}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
     
     job{1}.spm.stats.con.consess{2}.fcon.name = 'Effects of interest';
-    job{1}.spm.stats.con.consess{2}.fcon.weights = [eye(3) repelem(0,3,8)];
+    I = eye(8);
+    I(:,4:6) = 0;
+    job{1}.spm.stats.con.consess{2}.fcon.weights = [I repelem(0,8,3)];
     job{1}.spm.stats.con.consess{2}.fcon.sessrep = 'none';
+
+    %job{1}.spm.stats.con.consess{1}.tcon.name = 'Stimulation > Null 1';
+    %job{1}.spm.stats.con.consess{1}.tcon.weights = [2 2 2 0 0 0 -3 -3 repelem(0,3)];
+    %job{1}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
     
+    %job{1}.spm.stats.con.consess{2}.tcon.name = 'Imagery > Null 2';
+    %job{1}.spm.stats.con.consess{2}.tcon.weights = [0 0 0 2 2 2 -3 -3 repelem(0,3)];
+    %job{1}.spm.stats.con.consess{2}.tcon.sessrep = 'none';
+
+    %job{1}.spm.stats.con.consess{3}.fcon.name = 'Effects of interest';
+    %job{1}.spm.stats.con.consess{3}.fcon.weights = [eye(8) repelem(0,8,3)];
+    %job{1}.spm.stats.con.consess{3}.fcon.sessrep = 'none';
+
+
     job{1}.spm.stats.con.delete = 1;
     
     % run batch
@@ -71,10 +65,15 @@ for s=1:10
         
         % get voxels
         job{1}.spm.util.voi.roi{1}.spm.spmmat = {file_path_SPMmat};
+        %job{1}.spm.util.voi.roi{1}.spm.contrast = [1 2];
         job{1}.spm.util.voi.roi{1}.spm.contrast = 1;
         job{1}.spm.util.voi.roi{1}.spm.conjunction = 1;
-        job{1}.spm.util.voi.roi{1}.spm.threshdesc = 'FWE';
-        job{1}.spm.util.voi.roi{1}.spm.thresh = 0.05;
+        %job{1}.spm.util.voi.roi{1}.spm.threshdesc = 'FWE';
+        %job{1}.spm.util.voi.roi{1}.spm.thresh = 0.05;
+        
+        job{1}.spm.util.voi.roi{1}.spm.threshdesc = 'none';
+        job{1}.spm.util.voi.roi{1}.spm.thresh = 0.01;
+
         job{1}.spm.util.voi.roi{1}.spm.extent = 0;
         job{1}.spm.util.voi.roi{1}.spm.mask = struct('contrast', {}, 'thresh', {}, 'mtype', {});
         
