@@ -22,6 +22,7 @@ for s=1:10
     
     job{1}.spm.stats.con.consess{1}.tcon.name = 'Stimulation > Null';
     job{1}.spm.stats.con.consess{1}.tcon.weights = [2 2 2 0 0 0 -3 -3 repelem(0,3)];
+    %job{1}.spm.stats.con.consess{1}.tcon.weights = [1 1 1 0 0 0 -3 0 repelem(0,3)];
     job{1}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
     
     job{1}.spm.stats.con.consess{2}.fcon.name = 'Effects of interest';
