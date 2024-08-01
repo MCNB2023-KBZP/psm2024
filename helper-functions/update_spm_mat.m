@@ -1,7 +1,7 @@
 %% path specification
 folder_path_root = '/Users/pschm/icloud_link/University/mcnb/2_semester/PSM-II/psm2024';
 spm_path = '/Users/pschm/spm12_dev_main';
-folder_path_data = fullfile(folder_path_root, 'data');
+folder_path_data = fullfile(folder_path_root, 'data.tmp');
 
 %% initialization
 addpath(spm_path)
