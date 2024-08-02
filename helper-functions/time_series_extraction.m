@@ -10,12 +10,16 @@ addpath(folder_path_root)
 spm('defaults', 'fmri') 
 spm_jobman('initcfg')
 
+
+
 %% subject
-for s=1:10
+sub_all = [1 2 3 4 5 6 7 8 9 10];
+
+for s=sub_all
 
     folder_path_sub = fullfile(folder_path_data, sprintf('sub-%03d',s));
-    file_path_SPMmat = fullfile(folder_path_sub, '1st_level_good_bad_Imag', 'SPM.mat');
-    
+    %file_path_SPMmat = fullfile(folder_path_sub, '1st_level_good_bad_Imag', 'SPM.mat');
+    file_path_SPMmat = fullfile(folder_path_sub, '1st_level_new', 'SPM.mat');
     
     %% define contrasts
     clear job;
@@ -88,7 +92,7 @@ for s=1:10
             job{1}.spm.util.voi.roi{1}.spm.contrast = [1 2];
             job{1}.spm.util.voi.roi{1}.spm.conjunction = 1;
             job{1}.spm.util.voi.roi{1}.spm.threshdesc = 'none';
-            job{1}.spm.util.voi.roi{1}.spm.thresh = 0.01;
+            job{1}.spm.util.voi.roi{1}.spm.thresh = 0.001;
 
             % adjust
             job{1}.spm.util.voi.adjust = 3;
@@ -96,7 +100,7 @@ for s=1:10
             job{1}.spm.util.voi.roi{1}.spm.contrast = 4;
             job{1}.spm.util.voi.roi{1}.spm.conjunction = 1;
             job{1}.spm.util.voi.roi{1}.spm.threshdesc = 'none';
-            job{1}.spm.util.voi.roi{1}.spm.thresh = 0.01;
+            job{1}.spm.util.voi.roi{1}.spm.thresh = 0.001;
 
             % adjust
             job{1}.spm.util.voi.adjust = 5;
@@ -128,7 +132,7 @@ for s=1:10
         mkdir(folder_path_cloud_sub);
     end
 
-    file_path_VOI = cellstr(spm_select('FPList', fullfile(folder_path_sub, '1st_level_good_bad_Imag'), '^VOI_.*\.mat$'));
+    file_path_VOI = cellstr(spm_select('FPList', fullfile(folder_path_sub, '1st_level_new'), '^VOI_.*\.mat$'));
 
     for f=1:numel(file_path_VOI)
         copyfile(file_path_VOI{f}, folder_path_cloud_sub)
