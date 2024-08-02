@@ -10,8 +10,6 @@ addpath(folder_path_root)
 spm('defaults', 'fmri') 
 spm_jobman('initcfg')
 
-
-
 %% subject
 sub_all = [1 2 3 4 5 6 7 8 9 10];
 
@@ -39,16 +37,26 @@ for s=sub_all
     job{1}.spm.stats.con.consess{3}.fcon.weights = [eye(8) repelem(0,8,3)];
     job{1}.spm.stats.con.consess{3}.fcon.sessrep = 'none';
 
-    % Stim vs Null
-    job{1}.spm.stats.con.consess{4}.tcon.name = 'Stimulation > Null';
-    job{1}.spm.stats.con.consess{4}.tcon.weights = [2 2 2 0 0 0 -3 -3 repelem(0,3)];
-    job{1}.spm.stats.con.consess{4}.tcon.sessrep = 'none';
+    % F-contrast over Stim and Imag
+    job{1}.spm.stats.con.consess{4}.fcon.name = 'F Stim and Imag';
+    job{1}.spm.stats.con.consess{4}.fcon.weights = [1 1 1 0 0 0 -3 0 repelem(0,3); 0 0 0 1 1 1 0 -3 repelem(0,3)];
+    job{1}.spm.stats.con.consess{4}.fcon.sessrep = 'none';
     
-    job{1}.spm.stats.con.consess{5}.fcon.name = 'Effects Stim > NULL';
-    I = eye(8);
-    I(:,4:6) = 0;
-    job{1}.spm.stats.con.consess{5}.fcon.weights = [I repelem(0,8,3)];
+    job{1}.spm.stats.con.consess{5}.fcon.name = 'Effects F Stim and Imag';
+    job{1}.spm.stats.con.consess{5}.fcon.weights = [eye(8) repelem(0,8,3)];
     job{1}.spm.stats.con.consess{5}.fcon.sessrep = 'none';
+    
+
+    % Stim vs Null
+    % job{1}.spm.stats.con.consess{4}.tcon.name = 'Stimulation > Null';
+    % job{1}.spm.stats.con.consess{4}.tcon.weights = [2 2 2 0 0 0 -3 -3 repelem(0,3)];
+    % job{1}.spm.stats.con.consess{4}.tcon.sessrep = 'none';
+    
+    % job{1}.spm.stats.con.consess{5}.fcon.name = 'Effects Stim > NULL';
+    % I = eye(8);
+    % I(:,4:6) = 0;
+    % job{1}.spm.stats.con.consess{5}.fcon.weights = [I repelem(0,8,3)];
+    % job{1}.spm.stats.con.consess{5}.fcon.sessrep = 'none';
     
     % further F contrast
     %job{1}.spm.stats.con.consess{6}.fcon.name = 'F Stim';
@@ -73,9 +81,11 @@ for s=sub_all
     folder_path_preROI = fullfile(folder_path_data, 'rois');
     file_path_preROI = cellstr(spm_select('FPList', folder_path_preROI, '^.*\.nii$'));
     
-    roi_names = {'rBA2', 'lIPL', 'SMA', 'rIFG', 'lIFG', 'rBA1', 'rBA2_2', 'rBA3b', 'lSII', 'rSII'};
+    %roi_names = {'rBA2', 'lIPL', 'SMA', 'rIFG', 'lIFG', 'rBA1', 'rBA2_2', 'rBA3b', 'lSII', 'rSII'};
+    roi_names = {'lIPL', 'SMA', 'rIFG', 'lIFG', 'rBA1', 'rBA2', 'rBA3b', 'lSII', 'rSII'};
     %roi_contrast_set = [1 1 1 1 1 2 2 2 2 2];
     roi_contrast_set = repelem(2,10);
+    %roi_contrast_set = repelem(1,10);
 
     for i=1:numel(file_path_preROI)
         
@@ -92,7 +102,7 @@ for s=sub_all
             job{1}.spm.util.voi.roi{1}.spm.contrast = [1 2];
             job{1}.spm.util.voi.roi{1}.spm.conjunction = 1;
             job{1}.spm.util.voi.roi{1}.spm.threshdesc = 'none';
-            job{1}.spm.util.voi.roi{1}.spm.thresh = 0.001;
+            job{1}.spm.util.voi.roi{1}.spm.thresh = 0.005;
 
             % adjust
             job{1}.spm.util.voi.adjust = 3;
@@ -100,13 +110,16 @@ for s=sub_all
             job{1}.spm.util.voi.roi{1}.spm.contrast = 4;
             job{1}.spm.util.voi.roi{1}.spm.conjunction = 1;
             job{1}.spm.util.voi.roi{1}.spm.threshdesc = 'none';
-            job{1}.spm.util.voi.roi{1}.spm.thresh = 0.001;
+            job{1}.spm.util.voi.roi{1}.spm.thresh = 0.005;
+
+            %job{1}.spm.util.voi.roi{1}.spm.threshdesc = 'FWE';
+            %job{1}.spm.util.voi.roi{1}.spm.thresh = 0.05;
 
             % adjust
             job{1}.spm.util.voi.adjust = 5;
         end
 
-        job{1}.spm.util.voi.roi{1}.spm.extent = 0;
+        job{1}.spm.util.voi.roi{1}.spm.extent = 10;
         job{1}.spm.util.voi.roi{1}.spm.mask = struct('contrast', {}, 'thresh', {}, 'mtype', {});
         
         % predefined mask
