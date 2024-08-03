@@ -140,15 +140,26 @@ for s=sub_all
     
     % move to cloud
     folder_path_cloud_sub = fullfile(folder_path_cloud,  sprintf('sub-%03d',s));
+    folder_path_cloud_newGlm = fullfile(folder_path_cloud_sub,  '1st_level_new');
 
     if ~exist(folder_path_cloud_sub, 'dir')
         mkdir(folder_path_cloud_sub);
     end
 
+    if ~exist(folder_path_cloud_newGlm, 'dir')
+        mkdir(folder_path_cloud_newGlm);
+    end
+
+    
+
     file_path_VOI = cellstr(spm_select('FPList', fullfile(folder_path_sub, '1st_level_new'), '^VOI_.*\.mat$'));
 
     for f=1:numel(file_path_VOI)
-        copyfile(file_path_VOI{f}, folder_path_cloud_sub)
+        copyfile(file_path_VOI{f}, folder_path_cloud_newGlm)
     end
+
+    file_path_SPMmat_new = cellstr(spm_select('FPList', fullfile(folder_path_sub, '1st_level_new'), '^SPM.mat$'));
+
+    copyfile(file_path_SPMmat_new{1}, folder_path_cloud_newGlm);
 
 end % subject loop
