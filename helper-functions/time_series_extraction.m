@@ -11,7 +11,8 @@ spm('defaults', 'fmri')
 spm_jobman('initcfg')
 
 %% subject
-sub_all = [1 2 3 4 5 6 7 8 9 10];
+%sub_all = [3 8];
+sub_all = 1:10;
 
 for s=sub_all
 
@@ -83,9 +84,14 @@ for s=sub_all
     
     %roi_names = {'rBA2', 'lIPL', 'SMA', 'rIFG', 'lIFG', 'rBA1', 'rBA2_2', 'rBA3b', 'lSII', 'rSII'};
     roi_names = {'lIPL', 'SMA', 'rIFG', 'lIFG', 'rBA1', 'rBA2', 'rBA3b', 'lSII', 'rSII'};
+    
     %roi_contrast_set = [1 1 1 1 1 2 2 2 2 2];
     roi_contrast_set = repelem(2,10);
     %roi_contrast_set = repelem(1,10);
+
+    %file_path_preROI = {'/Users/pschm/icloud_link/University/mcnb/2_semester/PSM-II/psm2024/data.tmp/rois/2_Bi_SMA.nii'};
+    %roi_names = {'SMA'};
+    %roi_contrast_set = 2;
 
     for i=1:numel(file_path_preROI)
         
@@ -110,7 +116,8 @@ for s=sub_all
             job{1}.spm.util.voi.roi{1}.spm.contrast = 4;
             job{1}.spm.util.voi.roi{1}.spm.conjunction = 1;
             job{1}.spm.util.voi.roi{1}.spm.threshdesc = 'none';
-            job{1}.spm.util.voi.roi{1}.spm.thresh = 0.005;
+            %job{1}.spm.util.voi.roi{1}.spm.thresh = 0.005;
+            job{1}.spm.util.voi.roi{1}.spm.thresh = 0.1;
 
             %job{1}.spm.util.voi.roi{1}.spm.threshdesc = 'FWE';
             %job{1}.spm.util.voi.roi{1}.spm.thresh = 0.05;
