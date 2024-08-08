@@ -6,7 +6,7 @@ folder_path_data = '/Users/pschm/fubox/psm2024-time-series-reduced';
 
 %% initialization
 addpath(spm_path)
-addpath(folder_path_root)
+addpath(genpath(folder_path_root))
 spm('defaults', 'fmri') 
 spm_jobman('initcfg')
 
@@ -22,7 +22,7 @@ ready=1;
 clear job
 
 %sub_all = [1 2 3 5 6 7]; % 4 8 9 10
-sub_all = [1 2 4 5 6 7 8 9 10]; % 4 8 9 10
+sub_all = [1 2 4 5 6 7 8 9 10];
 models_all = 1:6;
 
 job{1}.spm.dcm.bms.inference.dir = {folder_path_results};

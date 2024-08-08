@@ -17,7 +17,7 @@ if ~exist(folder_path_results, 'dir')
 end
 
 %% extract parameter estimates
-sub_all = [1 2 3 5 6 7]; % 4 8 9 10
+sub_all = [1 2 4 5 6 7 8 9 10]; % 4 8 9 10
 model = 5;
 
 % DCM.a                              % switch on endogenous connections
@@ -50,25 +50,43 @@ end
 
 %% perform t-test
 test_results = cell(1, 5);
+se_results = cell(1, 5);
+se_results = cell(1, 5);
+t_results = cell(1, 5);
 for i=1:size(parameter_estimates,2)
     parameter_estimates_type = parameter_estimates(:,i);
     parameter_estimates_type_mat = cell2mat(parameter_estimates_type);
+    non_zero_columns = any(parameter_estimates_type_mat ~= 0, 1);
+    parameter_estimates_type_mat = parameter_estimates_type_mat(:, non_zero_columns);
     p_vec = [];
+    mean_val = [];
+    se_val = [];
+    t_val = [];
 
     for j=1:size(parameter_estimates_type_mat,2)
         
         testing = parameter_estimates_type_mat(:,j);
         %[h, p, ci, stats] = ttest(parameter_estimates);
-        [~,p,~,~] = ttest(testing);
+        [~,p,~,t] = ttest(testing);
         p_vec = [p_vec p];
+        t_val = [t_val t.tstat];
+        mean_val = [mean_val mean(testing)];
+        se_val = [se_val std(testing)/sqrt(length(testing))];
+
     end
     test_results(i) = {p_vec};
+    mean_results(i) = {mean_val};
+    t_results{i} = {t_val};
+    se_results(i) = {se_val};
 end
 
 %% FDR correction
 test_results_corrected = [];
 for t=1:numel(test_results)
-    test_results_corrected{t} = fdr_bh(test_results{t}, 0.05, 'dep','yes');
+    [h, ~, ~, adj_p] = fdr_bh(test_results{t}, 0.05, 'dep','yes');
+    test_results_corrected{t} = {adj_p h};
+
+    %[corrected_p, h] = bonf_holm(test_results{t}, 0.05)
 end
 
 %% clean up
